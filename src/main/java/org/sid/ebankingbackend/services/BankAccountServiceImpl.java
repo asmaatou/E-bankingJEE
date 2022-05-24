@@ -169,5 +169,10 @@ public class BankAccountServiceImpl implements BankAccountService{
         return accountOperations.stream().map(op->dtoMapper.fromAccountOperation(op)).collect(Collectors.toList());
     }
 
+    @Override
+    public AccountHistoryDTO getAccountHistory(String accountId, int page, int size) {
+        return null;
+    }
+
 
 }
