@@ -1,5 +1,6 @@
 package org.sid.ebankingbackend.services;
 
+import org.sid.ebankingbackend.dtos.BankAccountDTO;
 import org.sid.ebankingbackend.dtos.CurrentBankAccountDTO;
 import org.sid.ebankingbackend.dtos.CustomerDTO;
 import org.sid.ebankingbackend.dtos.SavingBankAccountDTO;
@@ -20,12 +21,12 @@ public interface BankAccountService {
     CurrentBankAccountDTO saveCurrentBankAccount(double initialBalance, double overDraft, Long customerId) throws CustomerNotFoundException;
     SavingBankAccountDTO saveSavingBankAccount(double initialBalance, double interestRate, Long customerId) throws CustomerNotFoundException;
     List<CustomerDTO> listCustomers();
-    BankAccount getBankAccount(String accountId) throws BankAccountNotFoundException;
+    BankAccountDTO getBankAccount(String accountId) throws BankAccountNotFoundException;
     void debit(String accountId, double amount, String description ) throws BalanceNotSufficientException, BankAccountNotFoundException;
     void credit(String accountId, double amount, String description ) throws BankAccountNotFoundException;
     void transfer(String accountIdSource, String accountIdDestination, double amount) throws BankAccountNotFoundException, BalanceNotSufficientException;
 
-    List<BankAccount> bankAccountList();
+    List<BankAccountDTO> bankAccountList();
 
     CustomerDTO getCustomer(Long customerId) throws CustomerNotFoundException;
 
