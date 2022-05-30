@@ -12,4 +12,5 @@ public class AccountHistoryDTO {
     private int totalPages;
     private  int pageSize;
     List<AccountOperationDTO> accountOperationDTOS;
+
 }

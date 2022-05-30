@@ -12,6 +12,9 @@ import org.sid.ebankingbackend.mappers.BankAccountMapperImpl;
 import org.sid.ebankingbackend.repositories.AccountOperationRespository;
 import org.sid.ebankingbackend.repositories.BankAccountRespository;
 import org.sid.ebankingbackend.repositories.CustomerRespository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -165,13 +169,24 @@ public class BankAccountServiceImpl implements BankAccountService{
     }
     @Override
     public List<AccountOperationDTO> accountHistory(String accountId){
-        List<AccountOperation> accountOperations = accountOperationRespository.findByAccountId(accountId);
+        List<AccountOperation> accountOperations = accountOperationRespository.findByBankAccountId(accountId);
         return accountOperations.stream().map(op->dtoMapper.fromAccountOperation(op)).collect(Collectors.toList());
     }
 
     @Override
-    public AccountHistoryDTO getAccountHistory(String accountId, int page, int size) {
-        return null;
+    public AccountHistoryDTO getAccountHistory(String accountId, int page, int size) throws BankAccountNotFoundException {
+        BankAccount bankAccount = bankAccountRespository.findById(accountId).orElse(null);
+        if(bankAccount == null)throw new BankAccountNotFoundException("Account not found");
+        Page<AccountOperation> accountOperations = accountOperationRespository.findByBankAccountId(accountId, PageRequest.of(page, size));
+        AccountHistoryDTO accountHistoryDTO = new AccountHistoryDTO();
+        List<AccountOperationDTO> accountOperationDTOS = accountOperations.getContent().stream().map(op-> dtoMapper.fromAccountOperation(op)).collect(Collectors.toList());
+        accountHistoryDTO.setAccountOperationDTOS(accountOperationDTOS);
+        accountHistoryDTO.setAccountId(bankAccount.getId());
+        accountHistoryDTO.setBalance(bankAccount.getBalance());
+        accountHistoryDTO.setCurrentPage(page);
+        accountHistoryDTO.setPageSize(size);
+        accountHistoryDTO.setTotalPages(accountOperations.getTotalPages());
+        return accountHistoryDTO;
     }
 
 
