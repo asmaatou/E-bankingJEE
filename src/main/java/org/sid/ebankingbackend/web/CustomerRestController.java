@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @Slf4j // To Log Informations
+@CrossOrigin("*")// To authorize all applications to send queries in this api
 public class CustomerRestController {
     private BankAccountService bankAccountService;
     @GetMapping("/customers")
